@@ -1,2 +1,2 @@
 #!/bin/bash
-mv [:UPPER:]* /tmp/u 
+find -type f [:UPPER:]* -exec mv '{}' /tmp/u ';'
