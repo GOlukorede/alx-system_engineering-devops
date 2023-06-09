@@ -1,2 +1,2 @@
 #!/bin/bash
-find -type f [:UPPER:]* | xargs mv /tmp/u
+find -type f [[:UPPER:]]* | xargs mv /tmp/u
