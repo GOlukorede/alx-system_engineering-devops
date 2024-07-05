@@ -3,16 +3,8 @@
 # Install nginx server
 apt update && apt -y install nginx
 
-# Enable ufw if not already enabled
-if ! ufw enabled &> /dev/null; then
-  ufw enable
-fi
-
-# Allow Nginx HTTP traffic
-ufw allow 'Nginx HTTP'
-
 # Create a simple index.html file
 echo "Hello World!" > /var/www/html/index.html
 
 # Start Nginx service
-systemctl start nginx
+service nginx restart
