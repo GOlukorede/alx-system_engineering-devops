@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # Script that configures a new Ubuntu machine to respect above requirements
 
-sudo apt update;
-sudo apt -y install nginx;
+sudo apt update
+sudo apt -y install nginx
 
-echo "Hello World!" |sudo tee /var/www/html/index.html;
+echo "Hello World!" | sudo tee /var/www/html/index.html;
 
-test="server_name _;\n\t/rewrite 301 ^\/redirect_me https:\/\/www.olukorede.tech;"
+test="server_name _;\n\t/rewrite ^\/redirect_me https:\/\/www.olukorede.tech permanent;"
 
-sudo sed -i "s/server_name _;/$test/" /etc/nginx/sites-enabled/default;
+sudo sed -i "s|server_name _;|$test|" /etc/nginx/sites-enabled/default
 
 sudo service nginx restart
