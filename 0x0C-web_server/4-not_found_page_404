@@ -1,0 +1,28 @@
+#!/bin/bash
+
+#Update and install nginx
+sudo apt update
+sudo apt install -y nginx
+
+#Create index.html file with content 'Hello World!'
+echo "Hello World!" | sudo tee /var/www/html/index.html;
+
+#Script for Redirection
+str_to_replace='server_name _;
+	rewrite ^/redirect_me https://github.com/GOlukorede permanent;'
+
+sudo sed -i "s|server_name _;|${str_to_replace}|" /etc/nginx/sites-available/default;
+
+#Script for custom error page
+echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html
+replace='listen 80 default_server;
+	error_page 404 /404.html;
+	location = /error {
+		root /var/www/html;
+		internal;
+	}'
+
+sudo sed -i "s|listen 80 default_server;|${replace}|" /etc/nginx/sites-available/default;
+
+#Restart nginx
+sudo service nginx restart
