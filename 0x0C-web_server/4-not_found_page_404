@@ -7,7 +7,7 @@ sudo apt install -y nginx
 #Create index.html file with content 'Hello World!'
 echo "Hello World!" | sudo tee /var/www/html/index.html;
 
-#Script for Redirection
+#Script for Redirections
 str_to_replace='server_name _;
 	rewrite ^/redirect_me https://github.com/GOlukorede permanent;'
 
