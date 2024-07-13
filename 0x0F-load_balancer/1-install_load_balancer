@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+#Script to Install and configure HAproxy on your lb-01 server
+
+# Update the server
+sudo apt -y update
+if [ $? -ne 0 ]; then
+	echo "The update is not successful"
+	exit 1
+fi
+
+# Install HAproxy
+sudo apt -y install haproxy
+if [ $? -ne 0 ]; then
+	echo "The installation of HAproxy is not successful"
+	exit 1
+fi
+
+script=\
+"
+frontend http
+	bind *:80
+	mode http
+	balance roundrobin
+
+backend web
+ 	mode http
+	server 438279-web-01 52.201.221.228:80 check
+	server 438279-web-02 54.166.166.47:80 check
+
+"
+
+echo "$script" | sudo tee -a /etc/haproxy/haproxy.cfg
+if [ $? -ne 0 ]; then
+	echo "The script is not properly saved"
+	exit 1
+fi
+
+echo "ENABLED=1" | sudo tee -a /etc/default/haproxy
+if [ $? -ne 0 ]; then
+	echo "Init file not enabled"
+	exit 1
+fi
+
+sudo service haproxy restart
+if [ $? -ne 0 ]; then
+	echo "HAproxy not restarted"
+	exit 1
+fi
+
+
