@@ -16,14 +16,16 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
+# Edit the config file
 script=\
 "
-frontend http
+frontend my_frontend
 	bind *:80
 	mode http
 	balance roundrobin
+	default_backend my_backend	
 
-backend web
+backend my_backend
  	mode http
 	server 438279-web-01 52.201.221.228:80 check
 	server 438279-web-02 54.166.166.47:80 check
@@ -36,12 +38,14 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
+# Enable haproxy to start automatically by init script
 echo "ENABLED=1" | sudo tee -a /etc/default/haproxy
 if [ $? -ne 0 ]; then
 	echo "Init file not enabled"
 	exit 1
 fi
 
+# Restart haproxy
 sudo service haproxy restart
 if [ $? -ne 0 ]; then
 	echo "HAproxy not restarted"
