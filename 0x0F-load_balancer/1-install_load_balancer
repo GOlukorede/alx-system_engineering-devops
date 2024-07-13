@@ -1,55 +1,28 @@
 #!/usr/bin/env bash
+# Create a script to install and configure HAProxy on lb-01 server
+# Configure HAProxy to send traffic to web-01 and web-02 servers
+# Distribute requests using a roundrobin algorithm
+# Make sure that HAProxy can be managed via an init script
+# Install and configure HAproxy on my lb-01 server.
+sudo apt-get -y update
+apt-get -y install haproxy
 
-#Script to Install and configure HAproxy on your lb-01 server
-
-# Update the server
-sudo apt -y update
-if [ $? -ne 0 ]; then
-	echo "The update is not successful"
-	exit 1
-fi
-
-# Install HAproxy
-sudo apt -y install haproxy
-if [ $? -ne 0 ]; then
-	echo "The installation of HAproxy is not successful"
-	exit 1
-fi
-
-# Edit the config file
-script=\
+# edit config file
+server_config=\
 "
-frontend my_frontend
-	bind *:80
-	mode http
-	balance roundrobin
-	default_backend my_backend	
-
+frontend  my_frontend
+        bind *:80
+        mode http
+        default_backend my_backend
 backend my_backend
- 	mode http
-	server 438279-web-01 52.201.221.228:80 check
-	server 438279-web-02 54.166.166.47:80 check
-
+        balance roundrobin
+        server 438279-web-01 52.201.221.228:80 check
+        server 438279-web-02 54.166.166.47:80 check
 "
+echo "$server_config" | sudo tee -a /etc/haproxy/haproxy.cfg
 
-echo "$script" | sudo tee -a /etc/haproxy/haproxy.cfg
-if [ $? -ne 0 ]; then
-	echo "The script is not properly saved"
-	exit 1
-fi
+# enable haproxy to be started by init script
 
-# Enable haproxy to start automatically by init script
 echo "ENABLED=1" | sudo tee -a /etc/default/haproxy
-if [ $? -ne 0 ]; then
-	echo "Init file not enabled"
-	exit 1
-fi
 
-# Restart haproxy
 sudo service haproxy restart
-if [ $? -ne 0 ]; then
-	echo "HAproxy not restarted"
-	exit 1
-fi
-
-
